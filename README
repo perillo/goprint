@@ -1,0 +1,4 @@
+This is the source code repository for the goprint Go command.
+
+goprint is a command that prints the source code of Go packages.  The generated
+document is in HTML format, suitable for printing.
