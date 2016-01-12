@@ -12,8 +12,10 @@ import (
 )
 
 type Token struct {
-	line  int
-	code  string
+	off  int
+	line int
+	// chunk is the source code chunk for the token, including whitespaces.
+	chunk string
 	value token.Token
 }
 
@@ -25,11 +27,8 @@ type lexer struct {
 }
 
 func (l *lexer) run() {
-	off := 0
 	for {
-		// Ignore the returned literal and instead find the full source code
-		// around the token.
-		p, tok, _ := l.s.Scan()
+		p, tok, lit := l.s.Scan()
 		if tok == token.EOF {
 			close(l.tokens)
 
@@ -37,17 +36,16 @@ func (l *lexer) run() {
 		}
 		pos := l.file.Position(p)
 		l.tokens <- &Token{
+			off:   pos.Offset,
 			line:  pos.Line,
 			value: tok,
-			code:  l.input[off:pos.Offset],
 		}
-		off = pos.Offset
 	}
 }
 
 func scan(name string, input []byte) chan *Token {
 	var s scanner.Scanner
-	tokens := make(chan *Token)
+	in := make(chan *Token)
 	fset := token.NewFileSet()
 	file := fset.AddFile(name, fset.Base(), len(input))
 
@@ -56,10 +54,25 @@ func scan(name string, input []byte) chan *Token {
 		input:  string(input),
 		file:   file,
 		s:      s,
-		tokens: tokens,
+		tokens: in,
 	}
 
+	// In the first stage we collect tokens and their offset in the source
+	// code.
 	go l.run()
 
-	return tokens
+	// In the second stage we add source chunk for each token.
+	out := make(chan *Token)
+
+	go func() {
+		prev := <-in
+		for cur := range in {
+			prev.chunk = l.input[prev.off:cur.off]
+			out <- prev
+			prev = cur
+		}
+		close(out)
+	}()
+
+	return out
 }

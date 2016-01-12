@@ -33,6 +33,6 @@ func main() {
 		log.Fatal(err)
 	}
 	for token := range scan(name, input) {
-		fmt.Printf("%s", token.code)
+		fmt.Printf("%s", token.chunk)
 	}
 }
