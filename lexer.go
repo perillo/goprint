@@ -25,8 +25,10 @@ type Token struct {
 	// characters ('\r) are discarded.
 	Code string
 	// Whitespace is white space after the token.
-	// It contains only spaces (U+0020), horizontal tabs (U+0009), and
-	// newlines (U+000A).
+	// It contains only spaces (U+0020), horizontal tabs (U+0009),
+	// carriage returns (U+000D) and newlines (U+000A).
+	// If the source code has been formatted with gofmt, '\r' will not be
+	// present.
 	Whitespace string
 	Value      token.Token
 }
