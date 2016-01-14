@@ -32,6 +32,11 @@ type Token struct {
 	Value      token.Token
 }
 
+// String implements the Stringer interface.
+func (t *Token) String() string {
+	return t.Code + t.Whitespace
+}
+
 type lexer struct {
 	input  string
 	file   *token.File

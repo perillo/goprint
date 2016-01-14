@@ -33,7 +33,7 @@ func main() {
 		log.Fatal(err)
 	}
 	for token := range Scan(name, input) {
-		fmt.Printf("%s%s", token.Code, token.Whitespace)
+		fmt.Printf("%v", token)
 	}
 	// Add final end of line.
 	fmt.Print("\n")
