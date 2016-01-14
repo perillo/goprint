@@ -65,6 +65,9 @@ func (l *lexer) run() {
 }
 
 // Scan scans the specified Go source file and returns a channel with Token.
+//
+// The EOF token is not returned, and the last token does not contain the "\n"
+// character.
 func Scan(name string, input []byte) chan *Token {
 	var s scanner.Scanner
 	in := make(chan *Token)

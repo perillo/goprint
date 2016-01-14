@@ -35,4 +35,6 @@ func main() {
 	for token := range Scan(name, input) {
 		fmt.Printf("%s%s", token.Code, token.Whitespace)
 	}
+	// Add final end of line.
+	fmt.Print("\n")
 }
