@@ -32,9 +32,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for token := range Scan(name, input) {
-		fmt.Printf("%v", token)
+
+	n := 1
+	for line := range Format(Scan(name, input)) {
+		fmt.Printf("%3d %v\n", n, line)
+		n++
 	}
-	// Add final end of line.
-	fmt.Print("\n")
 }
