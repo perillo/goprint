@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for token := range scan(name, input) {
-		fmt.Printf("%s%s", token.code, token.whitespace)
+	for token := range Scan(name, input) {
+		fmt.Printf("%s%s", token.Code, token.Whitespace)
 	}
 }

@@ -11,22 +11,24 @@ import (
 	"go/token"
 )
 
+// Token represents a Go token and associated source code, including white
+// space.
 type Token struct {
 	off  int
 	line int
-	// code is the token source code.
+	// Code is the token source code.
 	// For keywords, identifiers and basic type literals, it is the token
 	// literal.
 	// For the auto inserted SEMICOLON operator, it is "\n".
 	// For operators, it is the operator string representation.
 	// For raw strings literals and general comments, carriage return
 	// characters ('\r) are discarded.
-	code string
-	// whitespace is white space after the token.
+	Code string
+	// Whitespace is white space after the token.
 	// It contains only spaces (U+0020), horizontal tabs (U+0009), and
 	// newlines (U+000A).
-	whitespace string
-	value      token.Token
+	Whitespace string
+	Value      token.Token
 }
 
 type lexer struct {
@@ -56,13 +58,14 @@ func (l *lexer) run() {
 		l.tokens <- &Token{
 			off:   pos.Offset,
 			line:  pos.Line,
-			code:  lit,
-			value: tok,
+			Code:  lit,
+			Value: tok,
 		}
 	}
 }
 
-func scan(name string, input []byte) chan *Token {
+// Scan scans the specified Go source file and returns a channel with Token.
+func Scan(name string, input []byte) chan *Token {
 	var s scanner.Scanner
 	in := make(chan *Token)
 	fset := token.NewFileSet()
@@ -86,7 +89,7 @@ func scan(name string, input []byte) chan *Token {
 	go func() {
 		prev := <-in
 		for cur := range in {
-			prev.whitespace = l.input[prev.off+len(prev.code) : cur.off]
+			prev.Whitespace = l.input[prev.off+len(prev.Code) : cur.off]
 			out <- prev
 			prev = cur
 		}
