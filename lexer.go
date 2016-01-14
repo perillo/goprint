@@ -54,7 +54,8 @@ func (l *lexer) run() {
 			lit = tok.String()
 		} else if lit == "\n" {
 			// The auto inserted SEMICOLON token.
-			// Add the newline to wsp, instead of code.
+			// Remove the "\n" character since it will be present as
+			// whitespace.
 			lit = ""
 		}
 		l.tokens <- &Token{
