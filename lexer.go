@@ -9,6 +9,7 @@ package main
 import (
 	"go/scanner"
 	"go/token"
+	"strings"
 )
 
 // Token represents a Go token and associated source code, including white
@@ -25,10 +26,8 @@ type Token struct {
 	// characters ('\r) are discarded.
 	Code string
 	// Whitespace is white space after the token.
-	// It contains only spaces (U+0020), horizontal tabs (U+0009),
-	// carriage returns (U+000D) and newlines (U+000A).
-	// If the source code has been formatted with gofmt, '\r' will not be
-	// present.
+	// It contains only spaces (U+0020), horizontal tabs (U+0009) and newlines
+	// (U+000A).
 	Whitespace string
 	Value      token.Token
 }
@@ -95,7 +94,10 @@ func Scan(name string, input []byte) chan *Token {
 	go func() {
 		prev := <-in
 		for cur := range in {
-			prev.Whitespace = l.input[prev.off+len(prev.Code) : cur.off]
+			ws := l.input[prev.off+len(prev.Code) : cur.off]
+			// Discard '\r' in order to provide consistent data, as it is done
+			// by the Go scanner with raw string literals and general comments.
+			prev.Whitespace = discardCR(ws)
 			out <- prev
 			prev = cur
 		}
@@ -103,4 +105,17 @@ func Scan(name string, input []byte) chan *Token {
 	}()
 
 	return out
+}
+
+// discardCR discards carriage return characters from string.
+func discardCR(s string) string {
+	discard := func(r rune) rune {
+		if r == '\r' {
+			return -1
+		}
+
+		return r
+	}
+
+	return strings.Map(discard, s)
 }
