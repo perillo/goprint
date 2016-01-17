@@ -35,10 +35,13 @@ type Context struct {
 }
 
 var tmpl *template.Template
+var sel = GoFiles
 
 func init() {
 	tmpl = template.Must(template.New("index.html").Parse(index))
 	template.Must(tmpl.New("style.css").Parse(style))
+
+	flag.Var(&sel, "files", "files to print")
 }
 
 func main() {
@@ -46,20 +49,43 @@ func main() {
 	log.SetFlags(0)
 
 	// Parse command line.
+	var getFiles func(*Package) []string
+
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\tgoprint [flags] importpath\n")
+		fmt.Fprintf(os.Stderr, "Flags:\n")
+		flag.PrintDefaults()
+		os.Exit(2)
+	}
 	flag.Parse()
 	if flag.NArg() != 1 {
 		flag.Usage()
 		os.Exit(2)
 	}
+	switch sel {
+	case GoFiles:
+		getFiles = func(pkg *Package) []string { return pkg.GoFiles }
+	case CgoFiles:
+		getFiles = func(pkg *Package) []string { return pkg.CgoFiles }
+	case IgnoredGoFiles:
+		getFiles = func(pkg *Package) []string { return pkg.IgnoredGoFiles }
+	case TestGoFiles:
+		getFiles = func(pkg *Package) []string { return pkg.TestGoFiles }
+	case XTestGoFiles:
+		getFiles = func(pkg *Package) []string { return pkg.XTestGoFiles }
+	}
 
 	// Get package info, and format source files.
-	// Only GoFiles are printed, to avoid consuming too much paper.
+	// Only a selection of source files is printed, to avoid consuming too much
+	// paper.
 	pkg, err := Find(flag.Arg(0))
 	if err != nil {
 		log.Fatal(err)
 	}
-	files := make([]File, len(pkg.GoFiles))
-	for i, name := range pkg.GoFiles {
+	srcfiles := getFiles(pkg)
+	files := make([]File, len(srcfiles))
+	for i, name := range srcfiles {
 		path := filepath.Join(pkg.Dir, name)
 		input, err := ioutil.ReadFile(path)
 		if err != nil {
