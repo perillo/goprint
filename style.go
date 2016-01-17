@@ -50,10 +50,16 @@ var style = `
 		font-size: 10pt;
 		counter-increment: page 1;
 
+		@top-left {
+			vertical-align: bottom;
+			margin-bottom: 1.5em;
+			content: "{{ .ImportPath }}";
+		}
+
 		@top-right {
 			vertical-align: bottom;
 			margin-bottom: 1.5em;
-			content: "{{ .Name }}";
+			content: string(file);
 		}
 
 		@bottom-right {
@@ -63,11 +69,40 @@ var style = `
 		}
 	}
 
+	.package > h1 {
+		display: none;
+	}
+
+	.file {
+		page-break-after: always;
+		string-set: file attr(data-file);
+	}
+
+	.file:last-of-type {
+		page-break-after: auto;
+	}
+
+	.file > h1 {
+		display: none;
+	}
+
 	code {
 		display: block;
 		font-family: Inconsolata, Courier, monospace;
 		font-size: 10pt;
 		line-height: 12pt;
+	}
+}
+
+@media screen {
+	.package > h1 {
+		font-size: 28px;
+	}
+
+	.file > h1 {
+		margin: 16px;
+		font-size: 24px;
+		text-align: center;
 	}
 }
 `

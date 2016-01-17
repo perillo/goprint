@@ -16,11 +16,22 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 )
 
-type Context struct {
+// File represents an HTML formatted Go source file.
+type File struct {
 	Name string
-	File template.HTML
+	Code template.HTML
+}
+
+type Context struct {
+	// Package import path.
+	ImportPath string
+	// Package name.
+	Name string
+	// Source files to print.
+	Files []File
 }
 
 var tmpl *template.Template
@@ -41,15 +52,31 @@ func main() {
 		os.Exit(2)
 	}
 
-	name := flag.Arg(0)
-	input, err := ioutil.ReadFile(name)
+	// Get package info, and format source files.
+	// Only GoFiles are printed, to avoid consuming too much paper.
+	pkg, err := Find(flag.Arg(0))
 	if err != nil {
 		log.Fatal(err)
 	}
+	files := make([]File, len(pkg.GoFiles))
+	for i, name := range pkg.GoFiles {
+		path := filepath.Join(pkg.Dir, name)
+		input, err := ioutil.ReadFile(path)
+		if err != nil {
+			log.Fatalf("reading file: %v", err)
+		}
+		files[i] = File{
+			Name: name,
+			Code: printFile(name, input),
+		}
+	}
 
 	// Render template.
-	doc := printFile(name, input)
-	ctx := Context{name, doc}
+	ctx := Context{
+		ImportPath: pkg.ImportPath,
+		Name:       pkg.Name,
+		Files:      files,
+	}
 	err = tmpl.Execute(os.Stdout, ctx)
 	if err != nil {
 		log.Fatalf("executing: %v", err)
