@@ -32,16 +32,39 @@ type Context struct {
 	Name string
 	// Source files to print.
 	Files []File
+	// Style configuration
+	PageSize   PageSize
+	PageMargin PageMargin
+	Font       Font
 }
 
 var tmpl *template.Template
-var sel = GoFiles
+
+// Command line flags.
+var (
+	sel        = GoFiles
+	pageSize   = A4
+	pageMargin = PageMargin{
+		Top:    Dimension{2.5, Centimeter},
+		Right:  Dimension{1, Centimeter},
+		Bottom: Dimension{2.5, Centimeter},
+		Left:   Dimension{1, Centimeter},
+	}
+	font = Font{
+		Family:     "Courier",
+		Size:       Dimension{10, Point},
+		LineHeight: Dimension{12, Point},
+	}
+)
 
 func init() {
 	tmpl = template.Must(template.New("index.html").Parse(index))
 	template.Must(tmpl.New("style.css").Parse(style))
 
 	flag.Var(&sel, "files", "files to print")
+	flag.Var(&pageSize, "page-size", "page size")
+	flag.Var(&pageMargin, "page-margin", "page margin")
+	flag.Var(&font, "font", "font")
 }
 
 func main() {
@@ -102,6 +125,9 @@ func main() {
 		ImportPath: pkg.ImportPath,
 		Name:       pkg.Name,
 		Files:      files,
+		PageSize:   pageSize,
+		PageMargin: pageMargin,
+		Font:       font,
 	}
 	err = tmpl.Execute(os.Stdout, ctx)
 	if err != nil {

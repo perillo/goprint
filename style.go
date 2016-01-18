@@ -45,9 +45,9 @@ var style = `
 
 @media print {
 	@page {
-		size: A4 portrait;
-		margin: 2.5cm 1cm;
-		font-size: 10pt;
+		size: {{ .PageSize }};
+		margin: {{ .PageMargin }};
+		font-size: {{ .Font.Size }};
 		counter-increment: page 1;
 
 		@top-left {
@@ -88,9 +88,9 @@ var style = `
 
 	code {
 		display: block;
-		font-family: Inconsolata, Courier, monospace;
-		font-size: 10pt;
-		line-height: 12pt;
+		font-family: "{{ .Font.Family }}", Courier, monospace;
+		font-size: {{ .Font.Size }};
+		line-height: {{ .Font.LineHeight }};
 	}
 }
 
