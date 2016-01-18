@@ -9,6 +9,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os/exec"
 )
 
@@ -89,7 +90,11 @@ func Find(path string) (*Package, error) {
 		return nil, err
 	}
 	err = json.NewDecoder(stdout).Decode(pkg)
-	if err != nil {
+	if err == io.EOF {
+		// TODO(mperillo): Should we report a custom error message if a pattern
+		// was specified?
+		return nil, fmt.Errorf("cannot find package %q", path)
+	} else if err != nil {
 		return nil, err
 	}
 	err = cmd.Wait()
