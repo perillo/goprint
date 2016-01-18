@@ -82,22 +82,18 @@ func Find(path string) (*Package, error) {
 	cmd := exec.Command("go", "list", "-json", path)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		println("StdoutPipe")
 		return nil, err
 	}
 	err = cmd.Start()
 	if err != nil {
-		println("Start")
 		return nil, err
 	}
 	err = json.NewDecoder(stdout).Decode(pkg)
 	if err != nil {
-		println("Decode")
 		return nil, err
 	}
 	err = cmd.Wait()
 	if err != nil {
-		println("Wait")
 		return nil, err
 	}
 
