@@ -83,10 +83,7 @@ func main() {
 		os.Exit(2)
 	}
 	flag.Parse()
-	if flag.NArg() != 1 {
-		flag.Usage()
-		os.Exit(2)
-	}
+
 	switch sel {
 	case GoFiles:
 		getFiles = func(pkg *Package) []string { return pkg.GoFiles }
@@ -103,7 +100,7 @@ func main() {
 	// Get package info, and format source files.
 	// Only a selection of source files is printed, to avoid consuming too much
 	// paper.
-	pkg, err := Find(flag.Arg(0))
+	pkg, err := Find(flag.Args()...)
 	if err != nil {
 		log.Fatal(err)
 	}

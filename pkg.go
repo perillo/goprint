@@ -78,9 +78,10 @@ type Package struct {
 //
 // If the import path is a pattern and more than one package is matched, only
 // the first one is returned.
-func Find(path string) (*Package, error) {
+func Find(path ...string) (*Package, error) {
 	pkg := new(Package)
-	cmd := exec.Command("go", "list", "-json", path)
+	args := []string{"list", "-json"}
+	cmd := exec.Command("go", append(args, path...)...)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return nil, err
