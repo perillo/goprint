@@ -85,20 +85,17 @@ func Find(path string) (*Package, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = cmd.Start()
-	if err != nil {
+	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
-	err = json.NewDecoder(stdout).Decode(pkg)
-	if err == io.EOF {
+	if err := json.NewDecoder(stdout).Decode(pkg); err == io.EOF {
 		// TODO(mperillo): Should we report a custom error message if a pattern
 		// was specified?
 		return nil, fmt.Errorf("cannot find package %q", path)
 	} else if err != nil {
 		return nil, err
 	}
-	err = cmd.Wait()
-	if err != nil {
+	if err := cmd.Wait(); err != nil {
 		return nil, err
 	}
 

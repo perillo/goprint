@@ -77,6 +77,7 @@ func (l *lexer) run() {
 // character.
 func Scan(name string, input []byte) chan *Token {
 	var s scanner.Scanner
+
 	in := make(chan *Token)
 	fset := token.NewFileSet()
 	file := fset.AddFile(name, fset.Base(), len(input))

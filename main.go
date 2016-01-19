@@ -25,6 +25,7 @@ type File struct {
 	Code template.HTML
 }
 
+// Context is the context used by the HTML template.
 type Context struct {
 	// Package import path.
 	ImportPath string
