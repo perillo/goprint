@@ -42,9 +42,10 @@ type lexer struct {
 	file   *token.File
 	s      scanner.Scanner
 	tokens chan *Token
+	out    chan *Token
 }
 
-func (l *lexer) run() {
+func (l *lexer) run1() {
 	for {
 		p, tok, lit := l.s.Scan()
 		if tok == token.EOF {
@@ -71,6 +72,19 @@ func (l *lexer) run() {
 	}
 }
 
+func (l *lexer) run2() {
+	prev := <-l.tokens
+	for cur := range l.tokens {
+		ws := l.input[prev.off+len(prev.Code) : cur.off]
+		// Discard '\r' in order to provide consistent data, as it is done by
+		// the Go scanner with raw string literals and general comments.
+		prev.Whitespace = discardCR(ws)
+		l.out <- prev
+		prev = cur
+	}
+	close(l.out)
+}
+
 // Scan scans the specified Go source file and returns a channel with Token.
 //
 // The EOF token is not returned, and the last token does not contain the "\n"
@@ -78,37 +92,26 @@ func (l *lexer) run() {
 func Scan(name string, input []byte) chan *Token {
 	var s scanner.Scanner
 
-	in := make(chan *Token)
 	fset := token.NewFileSet()
 	file := fset.AddFile(name, fset.Base(), len(input))
+	tokens := make(chan *Token)
+	out := make(chan *Token)
 
 	s.Init(file, input, nil, scanner.ScanComments)
 	l := lexer{
 		input:  string(input),
 		file:   file,
 		s:      s,
-		tokens: in,
+		tokens: tokens,
+		out:    out,
 	}
 
 	// In the first stage we collect tokens, their literal code and their
 	// offset in the source code.
-	go l.run()
+	go l.run1()
 
 	// In the second stage we add white space after each token.
-	out := make(chan *Token)
-
-	go func() {
-		prev := <-in
-		for cur := range in {
-			ws := l.input[prev.off+len(prev.Code) : cur.off]
-			// Discard '\r' in order to provide consistent data, as it is done
-			// by the Go scanner with raw string literals and general comments.
-			prev.Whitespace = discardCR(ws)
-			out <- prev
-			prev = cur
-		}
-		close(out)
-	}()
+	go l.run2()
 
 	return out
 }
