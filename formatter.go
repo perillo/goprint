@@ -40,9 +40,10 @@ func (l Line) String() string {
 type formatter struct {
 	tokens chan *Token
 	lines  chan Line
+	out    chan Line
 }
 
-func (f *formatter) run() {
+func (f *formatter) run1() {
 	// Avoid extra allocations.
 	line := make(Line, 0, 10)
 	for tok := range f.tokens {
@@ -77,19 +78,67 @@ func (f *formatter) run() {
 	close(f.lines)
 }
 
+func (f *formatter) run2() {
+Loop:
+	for line := range f.lines {
+		if len(line) == 0 {
+			f.out <- line
+
+			continue
+		}
+		for i, span := range line {
+			pos, ok := eolPosition(span)
+			if !ok {
+				continue
+			}
+
+			// Split current line in three parts.
+			// First emit spans on the left side, including the first line of
+			// the offending comment or string.
+			lhs := Span{Token: span.Token, Code: span.Code[:pos]}
+			f.out <- append(line[:i], &lhs)
+
+			// Then emit additional lines in the comment or string, excluding
+			// the last one.
+			extra := strings.Split(span.Code[pos+1:], "\n")
+			for _, code := range extra[:len(extra)-1] {
+				ent := Span{Token: span.Token, Code: code}
+				f.out <- Line{&ent}
+			}
+
+			// Finally emit remaining spans on the right size, including the
+			// last line of the offending comment or string, adding white
+			// space.
+			rhs := Span{span.Token, extra[len(extra)-1], span.Whitespace}
+			f.out <- append(Line{&rhs}, line[i+1:]...)
+
+			continue Loop
+		}
+		f.out <- line
+	}
+	close(f.out)
+}
+
 // Format formats a tokenized Go source code returning a channel with each line
 // (without the eol character) of the original source code.  Each line consists
 // of a sequence of source code spans for each token.
 func Format(tokens chan *Token) chan Line {
 	lines := make(chan Line)
+	out := make(chan Line)
 	f := formatter{
 		tokens: tokens,
 		lines:  lines,
+		out:    out,
 	}
 
-	go f.run()
+	// In the first stage we just groups together tokens in the same line.
+	go f.run1()
 
-	return lines
+	// In the second stage we split raw strings and general comments in several
+	// lines, in case they contains the newline character.
+	go f.run2()
+
+	return out
 }
 
 // isAtEOL returns true if the token is at the end of a line.
@@ -114,4 +163,19 @@ func trimEOL(s string) (string, int) {
 	}
 
 	return s[n:], n
+}
+
+// eolPosition returns the position of the eol character for the specified
+// span, if available.
+func eolPosition(span *Span) (int, bool) {
+	if span.Token == token.COMMENT || span.Token == token.STRING {
+		// Only general comments and raw strings may span multiple
+		// lines.
+		idx := strings.IndexByte(span.Code, '\n')
+		if idx != -1 {
+			return idx, true
+		}
+	}
+
+	return -1, false
 }
