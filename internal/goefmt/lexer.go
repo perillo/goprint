@@ -15,8 +15,7 @@ import (
 // Token represents a Go token and associated source code, including white
 // space.
 type Token struct {
-	off  int
-	line int
+	pos token.Position
 	// Code is the token source code.
 	// For keywords, identifiers and basic type literals, it is the token
 	// literal.
@@ -64,8 +63,7 @@ func (l *lexer) run1() {
 			lit = ""
 		}
 		l.tokens <- &Token{
-			off:   pos.Offset,
-			line:  pos.Line,
+			pos:   pos,
 			Code:  lit,
 			Value: tok,
 		}
@@ -75,7 +73,7 @@ func (l *lexer) run1() {
 func (l *lexer) run2() {
 	prev := <-l.tokens
 	for cur := range l.tokens {
-		ws := l.input[prev.off+len(prev.Code) : cur.off]
+		ws := l.input[prev.pos.Offset+len(prev.Code) : cur.pos.Offset]
 		// Discard '\r' in order to provide consistent data, as it is done by
 		// the Go scanner with raw string literals and general comments.
 		prev.Whitespace = discardCR(ws)
