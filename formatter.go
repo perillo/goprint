@@ -38,15 +38,15 @@ func (l Line) String() string {
 }
 
 type formatter struct {
-	tokens chan *Token
-	lines  chan Line
-	out    chan Line
+	in    chan *Token
+	lines chan Line
+	out   chan Line
 }
 
 func (f *formatter) run1() {
 	// Avoid extra allocations.
 	line := make(Line, 0, 10)
-	for tok := range f.tokens {
+	for tok := range f.in {
 		if isAtEOL(tok) {
 			// The next token will be on a new line; add this token code and
 			// emit the complete line.
@@ -126,9 +126,9 @@ func Format(tokens chan *Token) chan Line {
 	lines := make(chan Line)
 	out := make(chan Line)
 	f := formatter{
-		tokens: tokens,
-		lines:  lines,
-		out:    out,
+		in:    tokens,
+		lines: lines,
+		out:   out,
 	}
 
 	// In the first stage we just groups together tokens in the same line.
