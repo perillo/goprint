@@ -4,7 +4,7 @@
 //
 // lexer.go source file is responsible for scanning Go source files.
 
-package main
+package goefmt
 
 import (
 	"go/scanner"

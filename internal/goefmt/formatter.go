@@ -5,7 +5,7 @@
 // formatter.go source file is responsible for formatting tokenized Go source
 // files into lines.
 
-package main
+package goefmt
 
 import (
 	"go/token"

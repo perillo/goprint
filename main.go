@@ -17,6 +17,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/perillo/goprint/internal/goefmt"
 )
 
 // File represents an HTML formatted Go source file.
@@ -139,13 +141,13 @@ func printFile(name string, input []byte) template.HTML {
 	buf := new(bytes.Buffer)
 
 	n := 1
-	for line := range Format(Scan(name, input)) {
+	for line := range goefmt.Format(goefmt.Scan(name, input)) {
 		if line == nil {
 			// Empty line
 			fmt.Fprintf(buf, "<span class=\"line empty\">%3d</span>\n", n)
 		} else {
 			fmt.Fprintf(
-				buf, "<span class=\"line\">%3d</span> %s\n", n, line.HTML())
+				buf, "<span class=\"line\">%3d</span> %s\n", n, lineToHTML(line))
 		}
 		n++
 	}

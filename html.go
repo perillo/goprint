@@ -11,10 +11,12 @@ import (
 	"go/token"
 	"html"
 	"strings"
+
+	"github.com/perillo/goprint/internal/goefmt"
 )
 
-// HTML returns an HTML representation for the code span.
-func (s *Span) HTML() string {
+// spanToHTML returns an HTML representation for the code span.
+func spanToHTML(s *goefmt.Span) string {
 	if s.Code == "" {
 		// Only horizontal white space.
 		return s.Whitespace
@@ -26,9 +28,9 @@ func (s *Span) HTML() string {
 		`<span class="%s">%s</span>%s`, class, code, s.Whitespace)
 }
 
-// HTML returns an HTML representation for the code line. The eol is not
+// lineToHTML returns an HTML representation for the code line. The eol is not
 // included.
-func (l Line) HTML() string {
+func lineToHTML(l goefmt.Line) string {
 	if l == nil {
 		// Empty line.
 		return ""
@@ -36,14 +38,14 @@ func (l Line) HTML() string {
 
 	spans := make([]string, len(l))
 	for i, span := range l {
-		spans[i] = span.HTML()
+		spans[i] = spanToHTML(span)
 	}
 
 	return strings.Join(spans, "")
 }
 
 // getClass returns the HTML class for the specified code span.
-func getClass(span *Span) []string {
+func getClass(span *goefmt.Span) []string {
 	// Avoid extra allocation.
 	class := make([]string, 0, 2)
 
