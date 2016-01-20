@@ -148,8 +148,8 @@ func printFile(name string, input []byte) template.HTML {
 			// Empty line
 			fmt.Fprintf(buf, "<span class=\"line empty\">%3d</span>\n", n)
 		} else {
-			fmt.Fprintf(
-				buf, "<span class=\"line\">%3d</span> %s\n", n, lineToHTML(line))
+			fmt.Fprintf(buf, "<span class=\"line\">%3d</span> %s\n", n,
+				lineToHTML(line))
 		}
 		n++
 	}
@@ -166,8 +166,7 @@ func spanToHTML(s *goefmt.Span) string {
 	class := strings.Join(goefmt.TokenClass(s), " ")
 	code := html.EscapeString(s.Code)
 
-	return fmt.Sprintf(
-		`<span class="%s">%s</span>%s`, class, code, s.Whitespace)
+	return fmt.Sprintf(`<span class="%s">%s</span>%s`, class, code, s.Whitespace)
 }
 
 // lineToHTML returns an HTML representation for the code line. The eol is not
