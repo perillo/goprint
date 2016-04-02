@@ -98,7 +98,7 @@ func (d Dimension) String() string {
 
 func numberToken(ch rune) bool {
 	// No negative numbers, and no scientific notation.
-	return strings.IndexRune("0123456789.", ch) >= 0
+	return strings.ContainsRune("0123456789.", ch)
 }
 
 func unitToken(ch rune) bool {
