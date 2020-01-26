@@ -2,20 +2,23 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
+# A Makefile template for Go projects.
+
 # Exported variable definitions.
 export GO111MODULE := on
 
-# Imported variables: GO_PKG
+# Imported variables.
+# GOPKG - used to select the target package
 
 # Variable definitions.
-TESTFLAGS := -race -v
 BENCHFLAGS := -v
 COVERMODE := atomic # atomic is necessary if the -race flag is enabled
+TESTFLAGS := -race -v
 
 # Standard rules.
 .POSIX:
 
-.PHONY: build bench clean cover github install lint print test test-all trace vet
+.PHONY: build bench clean cover github install lint print test test-trace trace vet
 
 # Default rule.
 build:
@@ -44,16 +47,15 @@ lint:
 	golint ./...
 
 print:
-	goprint -font='"Inconsolata" 10pt/12pt' ${GO_PKG} > build/pkg.html
+	goprint -font='"Inconsolata" 10pt/12pt' ${GOPKG} > build/pkg.html
 	prince -o build/pkg.pdf build/pkg.html
 
 test:
 	go test ${TESTFLAGS} -covermode=${COVERMODE} \
-		-coverprofile=build/coverage.out \
-		-trace=build/trace.out ${GO_PKG}
+		-coverprofile=build/coverage.out ./...
 
-test-all:
-	go test ${TESTFLAGS} ./...
+test-trace:
+	go test ${TESTFLAGS} -trace=build/trace.out ${GOPKG}
 
 trace:
 	go tool trace build/trace.out
