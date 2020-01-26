@@ -1,4 +1,4 @@
-# `goprint`: printing Go package source code
+# goprint [![GoDoc](https://godoc.org/github.com/perillo/goprint?status.svg)](http://godoc.org/github.com/perillo/goprint)
 
 `goprint` is a command that prints the source code of a Go packages.  The
 generated document is in `HTML` format, suitable for printing or converting to
