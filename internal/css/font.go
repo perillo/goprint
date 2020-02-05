@@ -9,7 +9,7 @@
 // Only a simple syntax is supported, and it is different from the one in the
 // font shorthand property.
 
-package main
+package css
 
 import (
 	"fmt"

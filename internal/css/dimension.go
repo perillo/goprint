@@ -10,7 +10,7 @@
 // pixels and quarter-millimiters).  Only real numbers are supported, as
 // float64.  For zero lengths the unit identifier is optional.
 
-package main
+package css
 
 import (
 	"fmt"

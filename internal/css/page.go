@@ -8,7 +8,7 @@
 //
 // Only a simple syntax is supported.
 
-package main
+package css
 
 import (
 	"fmt"

@@ -20,6 +20,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/perillo/goprint/internal/css"
 	"github.com/perillo/goprint/internal/goefmt"
 )
 
@@ -38,9 +39,9 @@ type Context struct {
 	// Source files to print.
 	Files []File
 	// Style configuration
-	PageSize   PageSize
-	PageMargin PageMargin
-	Font       Font
+	PageSize   css.PageSize
+	PageMargin css.PageMargin
+	Font       css.Font
 }
 
 var tmpl *template.Template
@@ -48,17 +49,17 @@ var tmpl *template.Template
 // Command line flags.
 var (
 	sel        = GoFiles
-	pageSize   = A4
-	pageMargin = PageMargin{
-		Top:    Dimension{2.5, Centimeter},
-		Right:  Dimension{1, Centimeter},
-		Bottom: Dimension{2.5, Centimeter},
-		Left:   Dimension{1, Centimeter},
+	pageSize   = css.A4
+	pageMargin = css.PageMargin{
+		Top:    css.Dimension{2.5, css.Centimeter},
+		Right:  css.Dimension{1, css.Centimeter},
+		Bottom: css.Dimension{2.5, css.Centimeter},
+		Left:   css.Dimension{1, css.Centimeter},
 	}
-	font = Font{
+	font = css.Font{
 		Family:     "Courier",
-		Size:       Dimension{10, Point},
-		LineHeight: Dimension{12, Point},
+		Size:       css.Dimension{10, css.Point},
+		LineHeight: css.Dimension{12, css.Point},
 	}
 )
 
