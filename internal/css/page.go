@@ -72,11 +72,36 @@ func (p PageMargin) String() string {
 func (p *PageMargin) Set(s string) error {
 	var v PageMargin
 
-	_, err := fmt.Sscanf(s, "%v %v %v %v", &v.Top, &v.Right, &v.Bottom, &v.Left)
-	if err != nil {
-		// TODO(mperillo): Improve error message when Right, Bottom or Left is
-		// missing.
-		return fmt.Errorf("invalid page margin: %q: %v", s, err)
+	l := strings.Fields(s)
+	if len(l) == 0 {
+		return fmt.Errorf("invalid page margin: %q", s)
+	}
+	if len(l) > 0 {
+		if err := v.Top.Set(l[0]); err != nil {
+			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+		}
+		v.Right = v.Top
+		v.Bottom = v.Top
+		v.Left = v.Top
+	}
+	if len(l) > 1 {
+		if err := v.Right.Set(l[1]); err != nil {
+			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+		}
+		v.Left = v.Right
+	}
+	if len(l) > 2 {
+		if err := v.Bottom.Set(l[2]); err != nil {
+			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+		}
+	}
+	if len(l) > 3 {
+		if err := v.Left.Set(l[3]); err != nil {
+			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+		}
+	}
+	if len(l) > 4 {
+		return fmt.Errorf("invalid page margin: %q", s)
 	}
 
 	*p = v
