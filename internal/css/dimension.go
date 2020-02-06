@@ -162,5 +162,3 @@ func (d *Dimension) Set(s string) error {
 
 	return nil
 }
-
-// NOTE(mperillo): The Value interface is not implemented for Dimension.
