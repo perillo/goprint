@@ -22,8 +22,9 @@ func TestPageSize(t *testing.T) {
 			var p PageSize
 			err := p.Set(test.literal)
 			if err != nil {
-				t.Errorf("expected err == nil, got %q", err)
-			} else if p != test.value {
+				t.Fatalf("expected err == nil, got %q", err)
+			}
+			if p != test.value {
 				t.Errorf("got %q, want %q", p, test.value)
 			}
 		})
