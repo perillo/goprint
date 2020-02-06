@@ -106,38 +106,53 @@ func unitToken(ch rune) bool {
 	return unicode.IsLetter(ch)
 }
 
+func dimensionToken(ch rune) bool {
+	return numberToken(ch) || unitToken(ch)
+}
+
 // Scan implements the Scanner interface.
 func (d *Dimension) Scan(state fmt.ScanState, verb rune) error {
-	var v Dimension
-
 	if verb != 'v' {
 		return fmt.Errorf("Dimension.Scan: invalid verb %c", verb)
 	}
 
-	// Scan number.
-	tok, err := state.Token(true, numberToken)
+	// Scan the entire string <num><unit> and delegate to the Set method.
+	// Ensure leading white space are not ignored.
+	//
+	// Dimension implements the Scanner interface only to make it more easy for
+	// Font and PageMargin to implement the Value interface.
+	ws := readspace(state)
+	tok, err := state.Token(false, dimensionToken)
 	if err != nil {
-		return fmt.Errorf("invalid dimension: %v", err)
-	}
-	value := string(tok)
-	if value == "" {
-		return fmt.Errorf("invalid dimension: %q: number is required", value)
-	}
-	if err := v.Value.Set(value); err != nil {
-		return fmt.Errorf("invalid dimension: %q: %v", value, err)
+		return fmt.Errorf("Dimension.Scan: %v", err)
 	}
 
-	// Scan unit.  The unit follows immediately after the number.
-	tok, err = state.Token(false, unitToken)
-	if err != nil {
-		return fmt.Errorf("invalid dimension: %v", err)
+	return d.Set(ws + string(tok))
+}
+
+// Set implements the Value interface.
+func (d *Dimension) Set(s string) error {
+	var v Dimension
+
+	// Split number and unit.
+	i := strings.IndexFunc(s, unitToken)
+	if i < 0 {
+		if err := v.Value.Set(s); err != nil {
+			return fmt.Errorf("invalid dimension: %v", err)
+		}
+		if v.Value == 0 {
+			// 0 is a valid dimension.
+			return nil
+		}
+
+		return fmt.Errorf("invalid dimension: unit is required: %q", s)
 	}
-	unit := string(tok)
-	if err := v.Unit.Set(unit); err != nil {
-		return fmt.Errorf("invalid dimension: \"%s%s\": %v", value, unit, err)
+
+	if err := v.Value.Set(s[:i]); err != nil {
+		return fmt.Errorf("invalid dimension: %q: %v", s, err)
 	}
-	if v.Unit == NoUnit && v.Value != 0 {
-		return fmt.Errorf("invalid dimension: %q: unit is required", value)
+	if err := v.Unit.Set(s[i:]); err != nil {
+		return fmt.Errorf("invalid dimension: %q: %v", s, err)
 	}
 
 	*d = v
