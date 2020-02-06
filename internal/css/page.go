@@ -45,8 +45,7 @@ func (p *PageSize) Set(s string) error {
 	return nil
 }
 
-// PageMargin represents CSS page margins.  Top, right, bottom and left
-// dimensions must all be provided.
+// PageMargin represents CSS page margins.
 type PageMargin struct {
 	Top    Dimension
 	Right  Dimension
