@@ -33,11 +33,11 @@ func (p PageSize) String() string {
 // Set implements the Value interface.
 func (p *PageSize) Set(s string) error {
 	if strings.TrimSpace(s) == "" {
-		return fmt.Errorf("page size is required")
+		return fmt.Errorf("invalid page size: %q", s)
 	}
 	v := PageSize(s)
 	if v != A4 && v != Letter {
-		return fmt.Errorf("%q is not a valid page size", s)
+		return fmt.Errorf("invalid page size: %q", s)
 	}
 
 	*p = v
@@ -76,7 +76,7 @@ func (p *PageMargin) Set(s string) error {
 	if err != nil {
 		// TODO(mperillo): Improve error message when Right, Bottom or Left is
 		// missing.
-		return fmt.Errorf("%q is not a valid page margin: %v", s, err)
+		return fmt.Errorf("invalid page margin: %q: %v", s, err)
 	}
 
 	*p = v

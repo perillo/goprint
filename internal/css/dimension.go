@@ -32,13 +32,14 @@ func (n Number) String() string {
 // Set implements the Value interface.
 func (n *Number) Set(s string) error {
 	if s == "" {
-		return fmt.Errorf("number is required")
+		return fmt.Errorf("invalid number: %q", s)
 	}
+
 	v, err := strconv.ParseFloat(s, 64)
 	if err != nil {
 		// TODO(mperillo): Improve error message; it can be syntax error or
 		// range error (see strconv.NumErr type).
-		return fmt.Errorf("%q is not a valid number: %v", s, err)
+		return fmt.Errorf("invalid number: %q: %v", s, err)
 	}
 
 	*n = Number(v)
@@ -77,7 +78,7 @@ var units = map[string]bool{
 // Set implements the Value interface.
 func (u *Unit) Set(s string) error {
 	if ok := units[s]; !ok {
-		return fmt.Errorf("%q is not a valid unit", s)
+		return fmt.Errorf("invalid unit: %q", s)
 	}
 
 	*u = Unit(s)
@@ -116,27 +117,27 @@ func (d *Dimension) Scan(state fmt.ScanState, verb rune) error {
 	// Scan number.
 	tok, err := state.Token(true, numberToken)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid dimension: %v", err)
 	}
 	value := string(tok)
 	if value == "" {
-		return fmt.Errorf("number is required")
+		return fmt.Errorf("invalid dimension: %q: number is required", value)
 	}
 	if err := v.Value.Set(value); err != nil {
-		return fmt.Errorf("%q is not a valid dimension: %v", value, err)
+		return fmt.Errorf("invalid dimension: %q: %v", value, err)
 	}
 
 	// Scan unit.  The unit follows immediately after the number.
 	tok, err = state.Token(false, unitToken)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid dimension: %v", err)
 	}
 	unit := string(tok)
 	if err := v.Unit.Set(unit); err != nil {
-		return fmt.Errorf("\"%s%s\" is not a valid dimension: %v", value, unit, err)
+		return fmt.Errorf("invalid dimension: \"%s%s\": %v", value, unit, err)
 	}
 	if v.Unit == NoUnit && v.Value != 0 {
-		return fmt.Errorf("%q is not a valid dimension: unit is required", value)
+		return fmt.Errorf("invalid dimension: %q: unit is required", value)
 	}
 
 	*d = v

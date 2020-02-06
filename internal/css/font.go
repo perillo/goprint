@@ -36,14 +36,14 @@ func (f *Font) Set(s string) error {
 
 	_, err := fmt.Sscanf(s, "%q %v/%v", &v.Family, &v.Size, &v.LineHeight)
 	if err == io.EOF {
-		return fmt.Errorf("font is required")
+		return fmt.Errorf("invalid font: %q", s)
 	} else if err == io.ErrUnexpectedEOF {
 		// The '/' character was missing.
-		return fmt.Errorf("%q is not a valid font: line height is required", s)
+		return fmt.Errorf("invalid font: %q: line height is required", s)
 	} else if err != nil {
 		// TODO(mperillo): Improve error message when Family is not quoted and
 		// when Size or LineHeight is missing.
-		return fmt.Errorf("%q is not a valid font: %v", s, err)
+		return fmt.Errorf("invalid font: %q: %v", s, err)
 	}
 
 	*f = v
