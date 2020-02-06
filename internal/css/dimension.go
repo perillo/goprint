@@ -31,7 +31,7 @@ func (n Number) String() string {
 
 // Set implements the Value interface.
 func (n *Number) Set(s string) error {
-	if s == "" {
+	if strings.TrimSpace(s) == "" {
 		return fmt.Errorf("invalid number: %q", s)
 	}
 
