@@ -65,7 +65,7 @@ func (u Unit) String() string {
 	return string(u)
 }
 
-var unit_set = map[string]bool{
+var units = map[string]bool{
 	"":     true,
 	"pt":   true,
 	"pc":   true,
@@ -76,7 +76,7 @@ var unit_set = map[string]bool{
 
 // Set implements the Value interface.
 func (u *Unit) Set(s string) error {
-	if ok := unit_set[s]; !ok {
+	if ok := units[s]; !ok {
 		return fmt.Errorf("%q is not a valid unit", s)
 	}
 
