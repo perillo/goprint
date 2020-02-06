@@ -22,7 +22,7 @@ func TestPageSize(t *testing.T) {
 			var p PageSize
 			err := p.Set(test.literal)
 			if err != nil {
-				t.Errorf("unexpected failure for %q: %v", test.literal, err)
+				t.Errorf("expected err == nil, got %v", err)
 			} else if p != test.value {
 				t.Errorf("got %q, want %q", p, test.value)
 			}
@@ -42,7 +42,7 @@ func TestInvalidPageSize(t *testing.T) {
 			var p PageSize
 			err := p.Set(test)
 			if err == nil {
-				t.Errorf("expected failure for %q, got %q", test, p)
+				t.Errorf("expected err != nil, got p == %q", p)
 			}
 		})
 	}
@@ -74,7 +74,7 @@ func TestPageMargin(t *testing.T) {
 			var p PageMargin
 			err := p.Set(test.literal)
 			if err != nil {
-				t.Fatalf("unexpected failure for %q: %v", test.literal, err)
+				t.Fatalf("expected err == nil, got %v", err)
 			}
 			if p != test.value {
 				t.Errorf("got %q, want %q", p, test.value)
@@ -96,7 +96,7 @@ func TestInvalidPageMargin(t *testing.T) {
 			var p PageMargin
 			err := p.Set(test)
 			if err == nil {
-				t.Errorf("expected failure for %q, got %q", test, p)
+				t.Errorf("expected err != nil, got p == %q", p)
 			}
 		})
 	}
@@ -120,7 +120,7 @@ func TestPageMarginString(t *testing.T) {
 			var p PageMargin
 			err := p.Set(test.input)
 			if err != nil {
-				t.Fatalf("unexpected failure for %q: %v", test.input, err)
+				t.Fatalf("expected err == nil, got %v", err)
 			}
 			output := p.String()
 			if output != test.output {

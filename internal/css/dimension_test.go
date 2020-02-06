@@ -30,7 +30,7 @@ func TestDimension(t *testing.T) {
 			var d Dimension
 			_, err := fmt.Sscan(test.literal, &d)
 			if err != nil {
-				t.Fatalf("unexpected failure for %q: %v", test.literal, err)
+				t.Fatalf("expected err == nil, got %v", err)
 			}
 			if d != test.value {
 				t.Errorf("got %q, want %q", d, test.value)
@@ -51,7 +51,7 @@ func TestInvalidDimension(t *testing.T) {
 			var d Dimension
 			_, err := fmt.Sscan(test, &d)
 			if err == nil {
-				t.Errorf("expected failure for %q, got %q", test, d)
+				t.Errorf("expected err != nil, got d == %q", d)
 			}
 		})
 	}

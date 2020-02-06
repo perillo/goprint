@@ -40,7 +40,7 @@ func TestFont(t *testing.T) {
 			var f Font
 			err := f.Set(test.literal)
 			if err != nil {
-				t.Fatalf("unexpected failure for %q: %v", test.literal, err)
+				t.Fatalf("expected err == nil, got %v", err)
 			}
 			if f != test.value {
 				t.Errorf("got %q, want %q", f, test.value)
@@ -62,7 +62,7 @@ func TestInvalidFont(t *testing.T) {
 			var f Font
 			err := f.Set(test)
 			if err == nil {
-				t.Errorf("expected failure for %q, got %q", test, f)
+				t.Errorf("expected err != nil, got f == %q", f)
 			}
 		})
 	}
