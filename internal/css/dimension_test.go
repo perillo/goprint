@@ -48,8 +48,6 @@ func TestInvalidDimension(t *testing.T) {
 		_, err := fmt.Sscan(test, &d)
 		if err == nil {
 			t.Errorf("expected failure for %q, got %q", test, d)
-		} else {
-			t.Logf("%q is invalid because: %v", test, err)
 		}
 	}
 }

@@ -59,8 +59,6 @@ func TestInvalidFont(t *testing.T) {
 		err := f.Set(test)
 		if err == nil {
 			t.Errorf("expected failure for %q, got %q", test, f)
-		} else {
-			t.Logf("%q is invalid because: %v", test, err)
 		}
 	}
 }

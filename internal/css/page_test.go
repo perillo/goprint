@@ -40,8 +40,6 @@ func TestInvalidPageSize(t *testing.T) {
 		err := p.Set(test)
 		if err == nil {
 			t.Errorf("expected failure for %q, got %q", test, p)
-		} else {
-			t.Logf("%q is invalid because: %v", test, err)
 		}
 	}
 }
@@ -91,8 +89,6 @@ func TestInvalidPageMargin(t *testing.T) {
 		err := p.Set(test)
 		if err == nil {
 			t.Errorf("expected failure for %q, got %q", test, p)
-		} else {
-			t.Logf("%q is invalid because: %v", test, err)
 		}
 	}
 }
