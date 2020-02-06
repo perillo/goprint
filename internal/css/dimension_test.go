@@ -43,7 +43,7 @@ func TestDimensionScan(t *testing.T) {
 // type, when a invalid input is provided.
 func TestInvalidDimensionScan(t *testing.T) {
 	var tests = []string{
-		"", " ", "10..", "10px", "10", "inch",
+		"", " ", "10..", "10px", "10", "-1", "-10pt", "inch",
 	}
 
 	for _, test := range tests {
@@ -91,7 +91,7 @@ func TestDimension(t *testing.T) {
 // when a invalid input is provided.
 func TestInvalidDimension(t *testing.T) {
 	var tests = []string{
-		"", " ", "10..", "10px", "10", "inch",
+		"", " ", "10..", "10px", "10", "-1", "-10pt", "inch",
 	}
 
 	for _, test := range tests {

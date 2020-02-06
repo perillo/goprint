@@ -41,6 +41,9 @@ func (n *Number) Set(s string) error {
 		// range error (see strconv.NumErr type).
 		return fmt.Errorf("invalid number: %q: %v", s, err)
 	}
+	if v < 0 {
+		return fmt.Errorf("invalid number: %q", s)
+	}
 
 	*n = Number(v)
 
@@ -98,8 +101,8 @@ func (d Dimension) String() string {
 }
 
 func numberToken(ch rune) bool {
-	// No negative numbers, and no scientific notation.
-	return strings.ContainsRune("0123456789.", ch)
+	// No scientific notation.
+	return strings.ContainsRune("-0123456789.", ch)
 }
 
 func unitToken(ch rune) bool {
