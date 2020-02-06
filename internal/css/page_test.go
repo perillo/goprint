@@ -18,13 +18,15 @@ func TestPageSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var p PageSize
-		err := p.Set(test.literal)
-		if err != nil {
-			t.Errorf("unexpected failure for %q: %v", test.literal, err)
-		} else if p != test.value {
-			t.Errorf("got %q, want %q", p, test.value)
-		}
+		t.Run(mkname(test.literal), func(t *testing.T) {
+			var p PageSize
+			err := p.Set(test.literal)
+			if err != nil {
+				t.Errorf("unexpected failure for %q: %v", test.literal, err)
+			} else if p != test.value {
+				t.Errorf("got %q, want %q", p, test.value)
+			}
+		})
 	}
 }
 
@@ -36,11 +38,13 @@ func TestInvalidPageSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var p PageSize
-		err := p.Set(test)
-		if err == nil {
-			t.Errorf("expected failure for %q, got %q", test, p)
-		}
+		t.Run(mkname(test), func(t *testing.T) {
+			var p PageSize
+			err := p.Set(test)
+			if err == nil {
+				t.Errorf("expected failure for %q, got %q", test, p)
+			}
+		})
 	}
 }
 
@@ -66,13 +70,15 @@ func TestPageMargin(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var p PageMargin
-		err := p.Set(test.literal)
-		if err != nil {
-			t.Errorf("unexpected failure for %q: %v", test.literal, err)
-		} else if p != test.value {
-			t.Errorf("got %q, want %q", p, test.value)
-		}
+		t.Run(mkname(test.literal), func(t *testing.T) {
+			var p PageMargin
+			err := p.Set(test.literal)
+			if err != nil {
+				t.Errorf("unexpected failure for %q: %v", test.literal, err)
+			} else if p != test.value {
+				t.Errorf("got %q, want %q", p, test.value)
+			}
+		})
 	}
 }
 
@@ -85,11 +91,13 @@ func TestInvalidPageMargin(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var p PageMargin
-		err := p.Set(test)
-		if err == nil {
-			t.Errorf("expected failure for %q, got %q", test, p)
-		}
+		t.Run(mkname(test), func(t *testing.T) {
+			var p PageMargin
+			err := p.Set(test)
+			if err == nil {
+				t.Errorf("expected failure for %q, got %q", test, p)
+			}
+		})
 	}
 }
 
@@ -107,16 +115,18 @@ func TestPageMarginString(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var p PageMargin
-		err := p.Set(test.input)
-		if err != nil {
-			t.Errorf("unexpected failure for %q: %v", test.input, err)
+		t.Run(mkname(test.input), func(t *testing.T) {
+			var p PageMargin
+			err := p.Set(test.input)
+			if err != nil {
+				t.Errorf("unexpected failure for %q: %v", test.input, err)
 
-			continue
-		}
-		output := p.String()
-		if output != test.output {
-			t.Errorf("got %q, want %q", output, test.output)
-		}
+				return
+			}
+			output := p.String()
+			if output != test.output {
+				t.Errorf("got %q, want %q", output, test.output)
+			}
+		})
 	}
 }

@@ -26,13 +26,15 @@ func TestDimension(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var d Dimension
-		_, err := fmt.Sscan(test.literal, &d)
-		if err != nil {
-			t.Errorf("unexpected failure for %q: %v", test.literal, err)
-		} else if d != test.value {
-			t.Errorf("got %q, want %q", d, test.value)
-		}
+		t.Run(mkname(test.literal), func(t *testing.T) {
+			var d Dimension
+			_, err := fmt.Sscan(test.literal, &d)
+			if err != nil {
+				t.Errorf("unexpected failure for %q: %v", test.literal, err)
+			} else if d != test.value {
+				t.Errorf("got %q, want %q", d, test.value)
+			}
+		})
 	}
 }
 
@@ -44,10 +46,12 @@ func TestInvalidDimension(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var d Dimension
-		_, err := fmt.Sscan(test, &d)
-		if err == nil {
-			t.Errorf("expected failure for %q, got %q", test, d)
-		}
+		t.Run(mkname(test), func(t *testing.T) {
+			var d Dimension
+			_, err := fmt.Sscan(test, &d)
+			if err == nil {
+				t.Errorf("expected failure for %q, got %q", test, d)
+			}
+		})
 	}
 }

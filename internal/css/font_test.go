@@ -36,13 +36,15 @@ func TestFont(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var f Font
-		err := f.Set(test.literal)
-		if err != nil {
-			t.Errorf("unexpected failure for %q: %v", test.literal, err)
-		} else if f != test.value {
-			t.Errorf("got %q, want %q", f, test.value)
-		}
+		t.Run(mkname(test.literal), func(t *testing.T) {
+			var f Font
+			err := f.Set(test.literal)
+			if err != nil {
+				t.Errorf("unexpected failure for %q: %v", test.literal, err)
+			} else if f != test.value {
+				t.Errorf("got %q, want %q", f, test.value)
+			}
+		})
 	}
 }
 
@@ -55,10 +57,12 @@ func TestInvalidFont(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var f Font
-		err := f.Set(test)
-		if err == nil {
-			t.Errorf("expected failure for %q, got %q", test, f)
-		}
+		t.Run(mkname(test), func(t *testing.T) {
+			var f Font
+			err := f.Set(test)
+			if err == nil {
+				t.Errorf("expected failure for %q, got %q", test, f)
+			}
+		})
 	}
 }
