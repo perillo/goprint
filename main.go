@@ -95,8 +95,8 @@ func main() {
 	}
 	srcfiles := pkg.GoFiles
 	files := make([]File, len(srcfiles))
-	for i, name := range srcfiles {
-		path := filepath.Join(pkg.Dir, name)
+	for i, path := range srcfiles {
+		name := filepath.Base(path)
 		input, err := ioutil.ReadFile(path)
 		if err != nil {
 			log.Fatalf("reading file: %v", err)
