@@ -7,6 +7,7 @@ package packages
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // A Package describes a single package found in a directory.
@@ -42,7 +43,7 @@ func Load(patterns ...string) (*Package, error) {
 	// Decode the first package, and ignore the rest.
 	pkg := new(Package)
 	if err := json.NewDecoder(stdout).Decode(pkg); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("JSON decode: %v", err)
 	}
 
 	return pkg, nil
