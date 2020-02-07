@@ -32,7 +32,7 @@ func (n Number) String() string {
 // Set implements the Value interface.
 func (n *Number) Set(s string) error {
 	if strings.TrimSpace(s) == "" {
-		return fmt.Errorf("invalid number: %q", s)
+		return fmt.Errorf("expected number: %q", s)
 	}
 
 	v, err := strconv.ParseFloat(s, 64)
@@ -80,6 +80,12 @@ var units = map[string]bool{
 
 // Set implements the Value interface.
 func (u *Unit) Set(s string) error {
+	if s == "" {
+		return nil
+	}
+	if strings.TrimSpace(s) == "" {
+		return fmt.Errorf("expected unit: %q", s)
+	}
 	if ok := units[s]; !ok {
 		return fmt.Errorf("invalid unit: %q", s)
 	}
@@ -148,7 +154,7 @@ func (d *Dimension) Set(s string) error {
 			return nil
 		}
 
-		return fmt.Errorf("invalid dimension: unit is required: %q", s)
+		return fmt.Errorf("invalid dimension: expected unit: %q", s)
 	}
 
 	if err := v.Value.Set(s[:i]); err != nil {
