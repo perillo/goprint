@@ -5,6 +5,7 @@
 package packages
 
 import (
+	"os"
 	"testing"
 )
 
@@ -45,5 +46,17 @@ func TestLoadFail(t *testing.T) {
 	}
 	if pkg != nil {
 		t.Error("expected pkg == nil")
+	}
+}
+
+// Allow changing the go command to use in the test.  This can be useful when
+// testing older versions of go, e.g.
+//  go get golang.org/dl/go1.10.8
+//  go1.10.8 download
+//  GOCMD=go1.10.8 go1.10.8 test ./...
+func init() {
+	if value := os.Getenv("GOCMD"); value != "" {
+		// TODO(mperillo): Check that $GOCMD is an executable in $PATH.
+		gocmd = value
 	}
 }

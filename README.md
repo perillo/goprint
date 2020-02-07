@@ -56,3 +56,7 @@ goprint main.go > build/pkg.html
 goprint -font='"Inconsolata" 10pt/12pt' ./internal/css > build/pkg.html
 prince -o build/pkg.pdf build/pkg.html
 ```
+
+# Requirements
+
+`goprint` requires at least *Go 1.8*.
