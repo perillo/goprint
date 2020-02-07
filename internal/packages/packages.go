@@ -27,13 +27,13 @@ type Package struct {
 	XTestGoFiles []string // _test.go files outside package
 }
 
-// Find returns the package named by the import path.
+// Load loads and return the package named by the given patterns.
 //
-// If the import path is a pattern and more than one package is matched, only
-// the first one is returned.
-func Find(path ...string) (*Package, error) {
+// If more than one package matches the patterns, only the first one is
+// returned.
+func Load(patterns ...string) (*Package, error) {
 	argv := []string{"-json"}
-	argv = append(argv, path...)
+	argv = append(argv, patterns...)
 	stdout, err := invokeGo("list", argv, nil)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func Find(path ...string) (*Package, error) {
 	if err := json.NewDecoder(stdout).Decode(pkg); err == io.EOF {
 		// TODO(mperillo): Should we report a custom error message if a pattern
 		// was specified?
-		return nil, fmt.Errorf("cannot find package %q", path)
+		return nil, fmt.Errorf("cannot find package %q", patterns)
 	} else if err != nil {
 		return nil, err
 	}
