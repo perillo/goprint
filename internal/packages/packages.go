@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Support for handling Go packages.
-
-package main
+// Package packages implements support for loading packages.
+package packages
 
 import (
 	"encoding/json"

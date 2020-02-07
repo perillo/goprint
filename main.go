@@ -22,6 +22,7 @@ import (
 
 	"github.com/perillo/goprint/internal/css"
 	"github.com/perillo/goprint/internal/goefmt"
+	"github.com/perillo/goprint/internal/packages"
 )
 
 // File represents an HTML formatted Go source file.
@@ -88,7 +89,7 @@ func main() {
 	// Get package info, and format source files.
 	// Only .go source files, excluding files using Cgo, are printed, to avoid
 	// consuming too much paper.
-	pkg, err := Find(flag.Args()...)
+	pkg, err := packages.Find(flag.Args()...)
 	if err != nil {
 		log.Fatal(err)
 	}
