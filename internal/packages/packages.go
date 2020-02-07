@@ -7,8 +7,6 @@ package packages
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 )
 
 // A Package describes a single package found in a directory.
@@ -31,6 +29,8 @@ type Package struct {
 //
 // If more than one package matches the patterns, only the first one is
 // returned.
+//
+// Load returns at least one package or an error.
 func Load(patterns ...string) (*Package, error) {
 	argv := []string{"-json"}
 	argv = append(argv, patterns...)
@@ -41,11 +41,7 @@ func Load(patterns ...string) (*Package, error) {
 
 	// Decode the first package, and ignore the rest.
 	pkg := new(Package)
-	if err := json.NewDecoder(stdout).Decode(pkg); err == io.EOF {
-		// TODO(mperillo): Should we report a custom error message if a pattern
-		// was specified?
-		return nil, fmt.Errorf("cannot find package %q", patterns)
-	} else if err != nil {
+	if err := json.NewDecoder(stdout).Decode(pkg); err != nil {
 		return nil, err
 	}
 
