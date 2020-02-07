@@ -93,7 +93,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	srcfiles := pkg.GoFiles
+	srcfiles := pkg.SourceFiles()
 	files := make([]File, len(srcfiles))
 	for i, path := range srcfiles {
 		name := filepath.Base(path)

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"sort"
 )
 
 // A Package describes a single package found in a directory.
@@ -25,6 +26,17 @@ type Package struct {
 	// Test information
 	TestGoFiles  []string // _test.go files in package
 	XTestGoFiles []string // _test.go files outside package
+}
+
+// SourceFiles returns all the .go files, including files ignored due to build
+// constraints.
+func (p *Package) SourceFiles() []string {
+	return concat(p.GoFiles, p.CgoFiles, p.IgnoredGoFiles)
+}
+
+// TestFiles returns all the _test.go files.
+func (p *Package) TestFiles() []string {
+	return concat(p.TestGoFiles, p.XTestGoFiles)
 }
 
 // Load loads and return the package named by the given patterns.
@@ -68,4 +80,16 @@ func abspaths(dir string, names []string) []string {
 	}
 
 	return names
+}
+
+// concat concatenates args into a single []string.  The resulting slice is
+// sorted.
+func concat(args ...[]string) []string {
+	var buf []string
+	for _, arg := range args {
+		buf = append(buf, arg...)
+	}
+	sort.Strings(buf)
+
+	return buf
 }
