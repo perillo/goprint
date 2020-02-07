@@ -24,6 +24,8 @@ On the bottom right of the page is reported the page number.
           page margin (default 2.5cm 1cm)
       -page-size value
           page size (default A4 portrait)
+      -test
+          print _test.go source files
 
 `importpath` is interpreted as in `go list`, however `goprint` only process the
 first package.
@@ -44,6 +46,14 @@ The right, bottom and left margins can be omitted.
 
 The font family, font size and line height must all be specified.  The font
 family must be quoted, even if it contains no white space.
+
+### `-test`
+
+By default, `goprint` prints all the `.go` source files, including files
+ignored to build constraint.
+
+When the `-test` flag is set, `goprint` will print all the `_test.go` source
+files, instead.
 
 
 ## Examples

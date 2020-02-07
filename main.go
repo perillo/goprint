@@ -49,6 +49,7 @@ var tmpl *template.Template
 
 // Command line flags.
 var (
+	test       = flag.Bool("test", false, "print _test.go source files")
 	pageSize   = css.A4
 	pageMargin = css.PageMargin{
 		Top:    css.Dimension{2.5, css.Centimeter},
@@ -93,7 +94,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	srcfiles := pkg.SourceFiles()
+	if *test {
+		srcfiles = pkg.TestFiles()
+	}
 	files := make([]File, len(srcfiles))
 	for i, path := range srcfiles {
 		name := filepath.Base(path)
