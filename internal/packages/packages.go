@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os/exec"
 )
 
 // A Package describes a single package found in a directory.
@@ -33,24 +32,20 @@ type Package struct {
 // If the import path is a pattern and more than one package is matched, only
 // the first one is returned.
 func Find(path ...string) (*Package, error) {
-	pkg := new(Package)
-	args := []string{"list", "-json"}
-	cmd := exec.Command("go", append(args, path...)...)
-	stdout, err := cmd.StdoutPipe()
+	argv := []string{"-json"}
+	argv = append(argv, path...)
+	stdout, err := invokeGo("list", argv, nil)
 	if err != nil {
 		return nil, err
 	}
-	if err := cmd.Start(); err != nil {
-		return nil, err
-	}
+
+	// Decode the first package, and ignore the rest.
+	pkg := new(Package)
 	if err := json.NewDecoder(stdout).Decode(pkg); err == io.EOF {
 		// TODO(mperillo): Should we report a custom error message if a pattern
 		// was specified?
 		return nil, fmt.Errorf("cannot find package %q", path)
 	} else if err != nil {
-		return nil, err
-	}
-	if err := cmd.Wait(); err != nil {
 		return nil, err
 	}
 
