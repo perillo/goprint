@@ -70,6 +70,9 @@ func (p PageMargin) String() string {
 // Set implements the Value interface.
 func (p *PageMargin) Set(s string) error {
 	var v PageMargin
+	mkerr := func(s string, err error) error {
+		return fmt.Errorf("invalid page margin: %q: %v", s, err)
+	}
 
 	l := strings.Fields(s)
 	if len(l) == 0 {
@@ -77,7 +80,7 @@ func (p *PageMargin) Set(s string) error {
 	}
 	if len(l) > 0 {
 		if err := v.Top.Set(l[0]); err != nil {
-			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+			return mkerr(s, err)
 		}
 		v.Right = v.Top
 		v.Bottom = v.Top
@@ -85,18 +88,18 @@ func (p *PageMargin) Set(s string) error {
 	}
 	if len(l) > 1 {
 		if err := v.Right.Set(l[1]); err != nil {
-			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+			return mkerr(s, err)
 		}
 		v.Left = v.Right
 	}
 	if len(l) > 2 {
 		if err := v.Bottom.Set(l[2]); err != nil {
-			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+			return mkerr(s, err)
 		}
 	}
 	if len(l) > 3 {
 		if err := v.Left.Set(l[3]); err != nil {
-			return fmt.Errorf("invalid page margin: %q: %v", s, err)
+			return mkerr(s, err)
 		}
 	}
 	if len(l) > 4 {
