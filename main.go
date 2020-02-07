@@ -48,7 +48,6 @@ var tmpl *template.Template
 
 // Command line flags.
 var (
-	sel        = GoFiles
 	pageSize   = css.A4
 	pageMargin = css.PageMargin{
 		Top:    css.Dimension{2.5, css.Centimeter},
@@ -67,7 +66,6 @@ func init() {
 	tmpl = template.Must(template.New("index.html").Parse(index))
 	template.Must(tmpl.New("style.css").Parse(style))
 
-	flag.Var(&sel, "files", "files to print")
 	flag.Var(&pageSize, "page-size", "page size")
 	flag.Var(&pageMargin, "page-margin", "page margin")
 	flag.Var(&font, "font", "font")
@@ -78,8 +76,6 @@ func main() {
 	log.SetFlags(0)
 
 	// Parse command line.
-	var getFiles func(*Package) []string
-
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "\tgoprint [flags] importpath\n")
@@ -89,27 +85,14 @@ func main() {
 	}
 	flag.Parse()
 
-	switch sel {
-	case GoFiles:
-		getFiles = func(pkg *Package) []string { return pkg.GoFiles }
-	case CgoFiles:
-		getFiles = func(pkg *Package) []string { return pkg.CgoFiles }
-	case IgnoredGoFiles:
-		getFiles = func(pkg *Package) []string { return pkg.IgnoredGoFiles }
-	case TestGoFiles:
-		getFiles = func(pkg *Package) []string { return pkg.TestGoFiles }
-	case XTestGoFiles:
-		getFiles = func(pkg *Package) []string { return pkg.XTestGoFiles }
-	}
-
 	// Get package info, and format source files.
-	// Only a selection of source files is printed, to avoid consuming too much
-	// paper.
+	// Only .go source files, excluding files using Cgo, are printed, to avoid
+	// consuming too much paper.
 	pkg, err := Find(flag.Args()...)
 	if err != nil {
 		log.Fatal(err)
 	}
-	srcfiles := getFiles(pkg)
+	srcfiles := pkg.GoFiles
 	files := make([]File, len(srcfiles))
 	for i, name := range srcfiles {
 		path := filepath.Join(pkg.Dir, name)

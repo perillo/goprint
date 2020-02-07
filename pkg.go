@@ -13,51 +13,6 @@ import (
 	"os/exec"
 )
 
-// SourceFile represents a selection of Go source files.
-type SourceFile int
-
-// Available Go source file selections.
-const (
-	GoFiles SourceFile = iota
-	CgoFiles
-	IgnoredGoFiles
-	TestGoFiles
-	XTestGoFiles
-)
-
-var sourceFile_string = []string{
-	GoFiles:        "go",
-	CgoFiles:       "cgo",
-	IgnoredGoFiles: "ignored",
-	TestGoFiles:    "test",
-	XTestGoFiles:   "xtest",
-}
-
-// String implements the Stringer interface.
-func (src SourceFile) String() string {
-	return sourceFile_string[src]
-}
-
-var sourceFile_set = map[string]SourceFile{
-	"go":      GoFiles,
-	"cgo":     CgoFiles,
-	"ignored": IgnoredGoFiles,
-	"test":    TestGoFiles,
-	"xtest":   XTestGoFiles,
-}
-
-// Set implements the Value interface.
-func (src *SourceFile) Set(s string) error {
-	v, ok := sourceFile_set[s]
-	if !ok {
-		return fmt.Errorf("%q is not a valid source file selection", s)
-	}
-
-	*src = v
-
-	return nil
-}
-
 // A Package describes a single package found in a directory.
 type Package struct {
 	Dir        string `json:",omitempty"` // directory containing package sources
