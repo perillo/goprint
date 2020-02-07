@@ -37,8 +37,8 @@ func (n *Number) Set(s string) error {
 
 	v, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		// TODO(mperillo): Improve error message; it can be syntax error or
-		// range error (see strconv.NumErr type).
+		// TODO(mperillo): Improve error message in Number.Set; it can be
+		// syntax error or range error (see strconv.NumErr type).
 		return fmt.Errorf("invalid number: %q: %v", s, err)
 	}
 	if v < 0 {

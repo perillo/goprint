@@ -41,8 +41,8 @@ func (f *Font) Set(s string) error {
 		// The '/' character was missing.
 		return fmt.Errorf("invalid font: %q: line height is required", s)
 	} else if err != nil {
-		// TODO(mperillo): Improve error message when Family is not quoted and
-		// when Size or LineHeight is missing.
+		// TODO(mperillo): Improve error message in Font.Set, when Family is
+		// not quoted and when Size or LineHeight is missing.
 		return fmt.Errorf("invalid font: %q: %v", s, err)
 	}
 
