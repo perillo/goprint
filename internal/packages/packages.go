@@ -13,18 +13,18 @@ import (
 
 // A Package describes a single package found in a directory.
 type Package struct {
-	Dir        string `json:",omitempty"` // directory containing package sources
-	ImportPath string `json:",omitempty"` // import path of package in dir
-	Name       string `json:",omitempty"` // package name
+	Dir        string // directory containing package sources
+	ImportPath string // import path of package in dir
+	Name       string // package name
 
 	// Source files
-	GoFiles        []string `json:",omitempty"` // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
-	CgoFiles       []string `json:",omitempty"` // .go sources files that import "C"
-	IgnoredGoFiles []string `json:",omitempty"` // .go sources ignored due to build constraints
+	GoFiles        []string // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
+	CgoFiles       []string // .go sources files that import "C"
+	IgnoredGoFiles []string // .go sources ignored due to build constraints
 
 	// Test information
-	TestGoFiles  []string `json:",omitempty"` // _test.go files in package
-	XTestGoFiles []string `json:",omitempty"` // _test.go files outside package
+	TestGoFiles  []string // _test.go files in package
+	XTestGoFiles []string // _test.go files outside package
 }
 
 // Find returns the package named by the import path.
