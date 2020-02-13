@@ -53,7 +53,7 @@ var style = `
 		@top-left {
 			vertical-align: bottom;
 			margin-bottom: 1.5em;
-			content: "{{ .ImportPath }}";
+			content: "{{ .Package.ImportPath }}";
 		}
 
 		@top-right {

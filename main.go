@@ -33,13 +33,11 @@ type File struct {
 
 // Context is the context used by the HTML template.
 type Context struct {
-	// Package import path.
-	ImportPath string
-	// Package name.
-	Name string
+	// Package to print.
+	Package *packages.Package
 	// Source files to print.
 	Files []File
-	// Style configuration
+	// Style configuration.
 	PageSize   css.PageSize
 	PageMargin css.PageMargin
 	Font       css.Font
@@ -114,8 +112,7 @@ func main() {
 
 	// Render template.
 	ctx := Context{
-		ImportPath: pkg.ImportPath,
-		Name:       pkg.Name,
+		Package:    pkg,
 		Files:      files,
 		PageSize:   pageSize,
 		PageMargin: pageMargin,

@@ -15,11 +15,11 @@ var index = `<!DOCTYPE html>
 			{{ template "style.css" . }}
 		</style>
 
-		<title>{{ .Name }}</title>
+		<title>{{ .Package.Name }}</title>
 	</head>
 	<body>
 		<section class="package">
-			<h1>{{.Name}}</h1>
+			<h1>{{.Package.Name}}</h1>
 			{{ range .Files }}
 			<section class="file" data-file="{{.Name}}">
 				<h1>{{.Name}}</h1>
