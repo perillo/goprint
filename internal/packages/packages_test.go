@@ -28,7 +28,7 @@ func TestLoadCurrent(t *testing.T) {
 		t.Error("expected err == nil")
 	}
 	if pkg == nil {
-		t.Error("expected pkg != nil")
+		t.Fatal("expected pkg != nil")
 	}
 
 	const want = "packages"
