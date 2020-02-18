@@ -65,7 +65,7 @@ var style = `
 		@bottom-left {
 			vertical-align: top;
 			margin-top: 1.5em;
-			content: "{{ .Package.Module }}" " " "{{ .Package.Module.Date }}";
+			content: "{{ .Module }}" " " "{{ .Module.Date }}";
 		}
 
 		@bottom-right {

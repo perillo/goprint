@@ -35,6 +35,8 @@ type File struct {
 type Context struct {
 	// Package to print.
 	Package *packages.Package
+	// Package's containing module.
+	Module *packages.Module
 	// Source files to print.
 	Files []File
 	// Style configuration.
@@ -122,6 +124,7 @@ func main() {
 	// Render template.
 	ctx := Context{
 		Package:    pkg,
+		Module:     pkg.Module,
 		Files:      files,
 		PageSize:   pageSize,
 		PageMargin: pageMargin,
