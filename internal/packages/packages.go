@@ -80,15 +80,15 @@ func (m *Module) String() string {
 	return s
 }
 
-// Load loads and return the package named by the given patterns.
+// Load loads and return the package named by the given pattern.
 //
-// If more than one package matches the patterns, only the first one is
+// If more than one package matches the pattern, only the first one is
 // returned.
 //
 // Load returns at least one package or an error.
-func Load(patterns ...string) (*Package, error) {
+func Load(pattern string) (*Package, error) {
 	argv := []string{"-json"}
-	argv = append(argv, patterns...)
+	argv = append(argv, pattern)
 	stdout, err := invokeGo("list", argv, nil)
 	if err != nil {
 		return nil, err

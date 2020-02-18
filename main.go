@@ -85,10 +85,19 @@ func main() {
 	}
 	flag.Parse()
 
+	var arg string
+	if flag.NArg() > 1 {
+		fmt.Fprintln(os.Stderr, "too many arguments")
+		flag.Usage()
+	}
+	if flag.NArg() == 1 {
+		arg = flag.Arg(0)
+	}
+
 	// Get package info, and format source files.
 	// Only .go source files, excluding files using Cgo, are printed, to avoid
 	// consuming too much paper.
-	pkg, err := packages.Load(flag.Args()...)
+	pkg, err := packages.Load(arg)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -23,7 +23,7 @@ func TestLoad(t *testing.T) {
 // TestLoadCurrent tests that Load works correctly when loading the current
 // package (packages).
 func TestLoadCurrent(t *testing.T) {
-	pkg, err := Load()
+	pkg, err := Load("")
 	if err != nil {
 		t.Error("expected err == nil")
 	}
