@@ -65,7 +65,7 @@ var style = `
 		@bottom-left {
 			vertical-align: top;
 			margin-top: 1.5em;
-			content: "{{ .Module }}" " " "{{ .Module.Date }}";
+			content: "{{ .Module }}" "\2003" "{{ .Module.Date }}";
 		}
 
 		@bottom-right {
