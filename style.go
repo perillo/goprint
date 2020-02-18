@@ -62,6 +62,12 @@ var style = `
 			content: string(file);
 		}
 
+		@bottom-left {
+			vertical-align: top;
+			margin-top: 1.5em;
+			content: "{{ .Package.Module }}";
+		}
+
 		@bottom-right {
 			vertical-align: top;
 			margin-top: 1.5em;

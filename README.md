@@ -12,6 +12,9 @@ On the top left of the page is reported the package `import path`.
 
 On the top right of the page is reported the file name.
 
+On the bottom left of the page is reported the package's containing module.
+Currently only the module path is printed, without the version.
+
 On the bottom right of the page is reported the page number.
 
 ## Usage

@@ -10,13 +10,15 @@ import (
 	"fmt"
 	"path/filepath"
 	"sort"
+	"time"
 )
 
 // A Package describes a single package found in a directory.
 type Package struct {
-	Dir        string // directory containing package sources
-	ImportPath string // import path of package in dir
-	Name       string // package name
+	Dir        string  // directory containing package sources
+	ImportPath string  // import path of package in dir
+	Name       string  // package name
+	Module     *Module // info about package's containing module, if any (can be nil)
 
 	// Source files
 	GoFiles        []string // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
@@ -37,6 +39,28 @@ func (p *Package) SourceFiles() []string {
 // TestFiles returns all the _test.go files.
 func (p *Package) TestFiles() []string {
 	return concat(p.TestGoFiles, p.XTestGoFiles)
+}
+
+// A Module describes a package's containing module.
+type Module struct {
+	Path    string     // module path
+	Version string     // module version
+	Time    *time.Time // time version was created
+}
+
+// String implements the Stringer interface.
+func (m *Module) String() string {
+	if m == nil {
+		// Ensure it does not panic when modules are not supported.
+		return ""
+	}
+
+	s := m.Path
+	if m.Version != "" {
+		s += "@" + m.Version
+	}
+
+	return s
 }
 
 // Load loads and return the package named by the given patterns.
