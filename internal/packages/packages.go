@@ -48,6 +48,23 @@ type Module struct {
 	Time    *time.Time // time version was created
 }
 
+// Date returns the date when the module version was created, or the current
+// date if it is not available.
+func (m *Module) Date() string {
+	const unixDate = "Mon Jan _2 2006"
+
+	if m == nil {
+		// Ensure it does not panic when modules are not supported.
+		return ""
+	}
+	if m.Time == nil {
+		// Return the current date.
+		return time.Now().Format(unixDate)
+	}
+
+	return m.Time.Format(unixDate)
+}
+
 // String implements the Stringer interface.
 func (m *Module) String() string {
 	if m == nil {
