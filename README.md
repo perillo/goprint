@@ -33,8 +33,8 @@ On the bottom right of the page is reported the page number.
 `importpath` is interpreted as in `go list`, however `goprint` only process the
 first package.
 
-By default `goprint` will print only `.go` source files, excluding `CGo` files,
-*ignored* files, *test* files and *external test* files.
+By default `goprint` will print all the `.go` source files, excluding the
+`_test.go` files.
 
 ### `-page-size`
 
@@ -52,11 +52,8 @@ family must be quoted, even if it contains no white space.
 
 ### `-test`
 
-By default, `goprint` prints all the `.go` source files, including files
-ignored to build constraint.
-
-When the `-test` flag is set, `goprint` will print all the `_test.go` source
-files, instead.
+When the `-test` flag is set, `goprint` will print all the `_test.go` files,
+instead of the `.go` source files.
 
 
 ## Examples
