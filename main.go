@@ -21,20 +21,6 @@ import (
 	"github.com/perillo/goprint/internal/packages"
 )
 
-// Context is the context used by the HTML template.
-type Context struct {
-	// Package to print.
-	Package *packages.Package
-	// Package's containing module.
-	Module *packages.Module
-	// Source files to print.
-	Files []File
-	// Style configuration.
-	PageSize   css.PageSize
-	PageMargin css.PageMargin
-	Font       css.Font
-}
-
 // Command line flags.
 var (
 	test       = flag.Bool("test", false, "print _test.go source files")
@@ -133,13 +119,20 @@ func printPackage(path string, test bool) error {
 	template.Must(tmpl.New("style.css").Parse(style))
 
 	// Render template.
-	ctx := Context{
-		Package:    pkg,
-		Module:     pkg.Module,
-		Files:      files,
-		PageSize:   pageSize,
-		PageMargin: pageMargin,
-		Font:       font,
+	ctx := struct {
+		Package    *packages.Package
+		Module     *packages.Module
+		Files      []File
+		PageSize   css.PageSize
+		PageMargin css.PageMargin
+		Font       css.Font
+	}{
+		pkg,
+		pkg.Module,
+		files,
+		pageSize,
+		pageMargin,
+		font,
 	}
 	if err := tmpl.Execute(os.Stdout, ctx); err != nil {
 		return fmt.Errorf("execute: %v", err)
