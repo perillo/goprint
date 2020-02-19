@@ -20,6 +20,13 @@ type File struct {
 	Code template.HTML
 }
 
+// Package represents an HTML formatted Go package.
+type Package struct {
+	ImportPath string
+	Name       string
+	Files      []File
+}
+
 // render returns an HTML fragment containing the formatted Go code for the
 // specified source file.  A line number is printed at the begin of each line.
 func render(name string, input []byte) template.HTML {

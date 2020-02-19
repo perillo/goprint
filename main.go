@@ -24,6 +24,7 @@ import (
 // Command line flags.
 var (
 	test       = flag.Bool("test", false, "print _test.go source files")
+	module     = flag.Bool("m", false, "print all the packages in the module")
 	pageSize   = css.A4
 	pageMargin = css.PageMargin{
 		Top:    css.Dimension{2.5, css.Centimeter},
@@ -67,7 +68,12 @@ func main() {
 		arg = flag.Arg(0)
 	}
 
-	if err := printPackage(arg, *test); err != nil {
+	// Print the package or module.
+	printer := printPackage
+	if *module {
+		printer = printModule
+	}
+	if err := printer(arg, *test); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -95,6 +101,29 @@ func build(pkg *packages.Package, test bool) ([]File, error) {
 	}
 
 	return files, nil
+}
+
+// buildModules returns all the module mod packages .go source files formatted in
+// HTML.
+//
+// If test is true, build will use each package _test.go files.
+func buildModule(mod *packages.Module, test bool) ([]Package, error) {
+	pkglist := make([]Package, len(mod.Packages))
+	for i, pkg := range mod.Packages {
+		files, err := build(pkg, test)
+		if err != nil {
+			return nil, err
+		}
+
+		p := Package{
+			ImportPath: pkg.ImportPath,
+			Name:       pkg.Name,
+			Files:      files,
+		}
+		pkglist[i] = p
+	}
+
+	return pkglist, nil
 }
 
 // printPackage writes on stdout an HTML document with the all the .go source
@@ -130,6 +159,48 @@ func printPackage(path string, test bool) error {
 		pkg,
 		pkg.Module,
 		files,
+		pageSize,
+		pageMargin,
+		font,
+	}
+	if err := tmpl.Execute(os.Stdout, ctx); err != nil {
+		return fmt.Errorf("execute: %v", err)
+	}
+
+	return nil
+}
+
+// printModule writes on stdout an HTML document with all the .go source files
+// of all the packages belonging to the module named by path.
+//
+// It test is true, printModule will use the packages _test.go files.
+func printModule(path string, test bool) error {
+	// Get module info.
+	mod, err := packages.LoadModule(path)
+	if err != nil {
+		return err
+	}
+
+	// Format packages.
+	pkglist, err := buildModule(mod, test)
+	if err != nil {
+		return err
+	}
+
+	// Load template.
+	tmpl := template.Must(template.New("index.html").Parse(indexmod))
+	template.Must(tmpl.New("style.css").Parse(stylemod))
+
+	// Render template.
+	ctx := struct {
+		Module     *packages.Module
+		Packages   []Package
+		PageSize   css.PageSize
+		PageMargin css.PageMargin
+		Font       css.Font
+	}{
+		mod,
+		pkglist,
 		pageSize,
 		pageMargin,
 		font,

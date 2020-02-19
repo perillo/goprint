@@ -23,6 +23,8 @@ On the bottom right of the page is reported the page number.
     Flags:
       -font value
           font (default "Courier" 10pt/12pt)
+      -m
+          print all the packages in the module
       -page-margin value
           page margin (default 2.5cm 1cm)
       -page-size value
@@ -54,6 +56,14 @@ family must be quoted, even if it contains no white space.
 
 When the `-test` flag is set, `goprint` will print all the `_test.go` files,
 instead of the `.go` source files.
+
+### `-m`
+
+When the `-m` flag is set, `goprint` operates in *module* mode and `importpath`
+is interpreted as `modulepath`.
+
+`goprint` will print the source files of all the packages belonging to the
+module named by the `modulepath`.
 
 
 ## Examples
