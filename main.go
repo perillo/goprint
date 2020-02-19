@@ -97,8 +97,6 @@ func main() {
 	}
 
 	// Get package info, and format source files.
-	// Only .go source files, excluding files using Cgo, are printed, to avoid
-	// consuming too much paper.
 	pkg, err := packages.Load(arg)
 	if err != nil {
 		log.Fatal(err)
