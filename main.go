@@ -35,8 +35,6 @@ type Context struct {
 	Font       css.Font
 }
 
-var tmpl *template.Template
-
 // Command line flags.
 var (
 	test       = flag.Bool("test", false, "print _test.go source files")
@@ -55,9 +53,6 @@ var (
 )
 
 func init() {
-	tmpl = template.Must(template.New("index.html").Parse(index))
-	template.Must(tmpl.New("style.css").Parse(style))
-
 	flag.Var(&pageSize, "page-size", "page size")
 	flag.Var(&pageMargin, "page-margin", "page margin")
 	flag.Var(&font, "font", "font")
@@ -86,29 +81,8 @@ func main() {
 		arg = flag.Arg(0)
 	}
 
-	// Get package info, and format source files.
-	pkg, err := packages.Load(arg)
-	if err != nil {
+	if err := printPackage(arg, *test); err != nil {
 		log.Fatal(err)
-	}
-
-	files, err := build(pkg, *test)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Render template.
-	ctx := Context{
-		Package:    pkg,
-		Module:     pkg.Module,
-		Files:      files,
-		PageSize:   pageSize,
-		PageMargin: pageMargin,
-		Font:       font,
-	}
-	err = tmpl.Execute(os.Stdout, ctx)
-	if err != nil {
-		log.Fatalf("executing: %v", err)
 	}
 }
 
@@ -135,4 +109,41 @@ func build(pkg *packages.Package, test bool) ([]File, error) {
 	}
 
 	return files, nil
+}
+
+// printPackage writes on stdout an HTML document with the all the .go source
+// files of the package named by path.
+//
+// It test is true, printPackage will use the package _test.go files.
+func printPackage(path string, test bool) error {
+	// Get package info.
+	pkg, err := packages.Load(path)
+	if err != nil {
+		return err
+	}
+
+	// Format source files.
+	files, err := build(pkg, test)
+	if err != nil {
+		return err
+	}
+
+	// Load template.
+	tmpl := template.Must(template.New("index.html").Parse(index))
+	template.Must(tmpl.New("style.css").Parse(style))
+
+	// Render template.
+	ctx := Context{
+		Package:    pkg,
+		Module:     pkg.Module,
+		Files:      files,
+		PageSize:   pageSize,
+		PageMargin: pageMargin,
+		Font:       font,
+	}
+	if err := tmpl.Execute(os.Stdout, ctx); err != nil {
+		return fmt.Errorf("execute: %v", err)
+	}
+
+	return nil
 }
