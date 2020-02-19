@@ -102,21 +102,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	srcfiles := pkg.SourceFiles()
-	if *test {
-		srcfiles = pkg.TestFiles()
-	}
-	files := make([]File, len(srcfiles))
-	for i, path := range srcfiles {
-		name := filepath.Base(path)
-		input, err := ioutil.ReadFile(path)
-		if err != nil {
-			log.Fatalf("reading file: %v", err)
-		}
-		files[i] = File{
-			Name: name,
-			Code: printFile(name, input),
-		}
+	files, err := build(pkg, *test)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// Render template.
@@ -134,9 +122,34 @@ func main() {
 	}
 }
 
-// printFile returns an HTML fragment containing the formatted Go code for the
+// build returns the package pkg .go source files formatted in HTML.
+//
+// If test is true, build will use the package pkg _test.go files.
+func build(pkg *packages.Package, test bool) ([]File, error) {
+	srcfiles := pkg.SourceFiles()
+	if test {
+		srcfiles = pkg.TestFiles()
+	}
+
+	files := make([]File, len(srcfiles))
+	for i, path := range srcfiles {
+		name := filepath.Base(path)
+		input, err := ioutil.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("read file %s: %v", path, err)
+		}
+		files[i] = File{
+			Name: name,
+			Code: render(name, input),
+		}
+	}
+
+	return files, nil
+}
+
+// render returns an HTML fragment containing the formatted Go code for the
 // specified source file. A line number is printed at the begin of each line.
-func printFile(name string, input []byte) template.HTML {
+func render(name string, input []byte) template.HTML {
 	buf := new(bytes.Buffer)
 
 	n := 1
