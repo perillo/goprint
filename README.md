@@ -72,4 +72,4 @@ prince -o build/pkg.pdf build/pkg.html
 
 # Requirements
 
-`goprint` requires at least *Go 1.8*.
+`goprint` requires at least *Go* 1.7.  There are no external dependencies.
