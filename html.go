@@ -21,7 +21,7 @@ type File struct {
 }
 
 // render returns an HTML fragment containing the formatted Go code for the
-// specified source file. A line number is printed at the begin of each line.
+// specified source file.  A line number is printed at the begin of each line.
 func render(name string, input []byte) template.HTML {
 	buf := new(bytes.Buffer)
 
@@ -52,7 +52,7 @@ func spanToHTML(s *goefmt.Span) string {
 	return fmt.Sprintf(`<span class="%s">%s</span>%s`, class, code, s.Whitespace)
 }
 
-// lineToHTML returns an HTML representation for the code line. The eol is not
+// lineToHTML returns an HTML representation for the code line.  The eol is not
 // included.
 func lineToHTML(l goefmt.Line) string {
 	if l == nil {
