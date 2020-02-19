@@ -17,6 +17,7 @@ import (
 	"strings"
 )
 
+// gocmd is the go command to use.
 var gocmd = "go"
 
 // attr holds the attributes that will be applied to the cmd/go command.
