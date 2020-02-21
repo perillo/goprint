@@ -18,12 +18,13 @@ var indexmod = `<!DOCTYPE html>
 		<title>{{ .Module }}</title>
 	</head>
 	<body>
+	  <h1>{{ .Module }}</h1>
 	  {{ range .Packages }}
 		<section class="package" data-package="{{ .ImportPath }}">
-			<h1>{{ .ImportPath }}</h1>
+			<h2>{{ .ImportPath }}</h2>
 			{{ range .Files }}
 			<section class="file" data-file="{{ .Name }}">
-				<h1>{{ .Name }}</h1>
+				<h3>{{ .Name }}</h3>
 				<pre><code>{{ .Code }}</code></pre>
 			</section>
 			{{ end }}

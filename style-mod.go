@@ -111,13 +111,19 @@ var stylemod = `
 }
 
 @media screen {
-	.package > h1 {
-		font-size: 28px;
+	h1 {
+		font-size: 2.5em;
 	}
 
-	.file > h1 {
+	h2 {
 		margin: 16px;
-		font-size: 24px;
+		font-size: 2em;
+		text-align: center;
+	}
+
+	h3 {
+		margin: 16px;
+		font-size: 1.5em;
 		text-align: center;
 	}
 }
