@@ -102,13 +102,13 @@ var style = `
 }
 
 @media screen {
-	.package > h1 {
-		font-size: 28px;
+	h1 {
+		font-size: 2em;
 	}
 
-	.file > h1 {
+	h2 {
 		margin: 16px;
-		font-size: 24px;
+		font-size: 1.5em;
 		text-align: center;
 	}
 }

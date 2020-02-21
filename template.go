@@ -22,7 +22,7 @@ var index = `<!DOCTYPE html>
 			<h1>{{ .Package }}</h1>
 			{{ range .Files }}
 			<section class="file" data-file="{{ .Name }}">
-				<h1>{{ .Name }}</h1>
+				<h2>{{ .Name }}</h2>
 				<pre><code>{{ .Code }}</code></pre>
 			</section>
 			{{ end }}
