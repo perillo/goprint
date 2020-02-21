@@ -19,11 +19,11 @@ var index = `<!DOCTYPE html>
 	</head>
 	<body>
 		<section class="package">
-			<h1>{{.Package.Name}}</h1>
+			<h1>{{ .Package.Name }}</h1>
 			{{ range .Files }}
-			<section class="file" data-file="{{.Name}}">
-				<h1>{{.Name}}</h1>
-				<pre><code>{{.Code}}</code></pre>
+			<section class="file" data-file="{{ .Name }}">
+				<h1>{{ .Name }}</h1>
+				<pre><code>{{ .Code }}</code></pre>
 			</section>
 			{{ end }}
 		</section>
