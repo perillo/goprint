@@ -99,7 +99,7 @@ code {
 		page-break-after: auto;
 	}
 
-	.file > h1 {
+	h1, h2 {
 		display: none;
 	}
 }
