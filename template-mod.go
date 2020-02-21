@@ -20,7 +20,7 @@ var indexmod = `<!DOCTYPE html>
 	<body>
 	  {{ range .Packages }}
 		<section class="package" data-package="{{ .ImportPath }}">
-			<h1>{{ .Name }}</h1>
+			<h1>{{ .ImportPath }}</h1>
 			{{ range .Files }}
 			<section class="file" data-file="{{ .Name }}">
 				<h1>{{ .Name }}</h1>

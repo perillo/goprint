@@ -31,6 +31,11 @@ type Package struct {
 	XTestGoFiles []string // _test.go files outside package
 }
 
+// String implements the Stringer interface.
+func (p *Package) String() string {
+	return p.ImportPath
+}
+
 // SourceFiles returns all the .go files, including files ignored due to build
 // constraints.
 func (p *Package) SourceFiles() []string {
