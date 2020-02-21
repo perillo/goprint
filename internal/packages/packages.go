@@ -63,7 +63,11 @@ func Load(pattern string) (*Package, error) {
 // load loads and return the packages named by the given pattern.
 func load(pattern string) ([]*Package, error) {
 	argv := []string{"-json"}
-	argv = append(argv, pattern)
+	if pattern != "" {
+		// Don't pass an empty argument to go list.
+		// See https://github.com/golang/go/issues/37300.
+		argv = append(argv, pattern)
+	}
 	stdout, err := invokeGo("list", argv, nil)
 	if err != nil {
 		return nil, err
