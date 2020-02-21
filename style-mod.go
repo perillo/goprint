@@ -11,6 +11,7 @@ var stylemod = `
 * {
 	margin: 0;
 	padding: 0;
+	tab-size: 4;
 }
 
 .line {
