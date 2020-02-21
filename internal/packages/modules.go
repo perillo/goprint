@@ -25,7 +25,7 @@ type Module struct {
 // Date returns the date when the module version was created, or the current
 // date if it is not available.
 func (m *Module) Date() string {
-	const unixDate = "Mon Jan _2 2006"
+	const rfc1123Date = "Mon, 02 Jan 2006"
 
 	if m == nil {
 		// Ensure it does not panic when modules are not supported.
@@ -33,10 +33,10 @@ func (m *Module) Date() string {
 	}
 	if m.Time == nil {
 		// Return the current date.
-		return time.Now().Format(unixDate)
+		return time.Now().Format(rfc1123Date)
 	}
 
-	return m.Time.Format(unixDate)
+	return m.Time.Format(rfc1123Date)
 }
 
 // String implements the Stringer interface.
