@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"sort"
 )
@@ -48,6 +49,19 @@ func (p *Package) TestFiles() []string {
 //
 // Load returns at least one package or an error.
 func Load(pattern string) (*Package, error) {
+	pkglist, err := load(pattern)
+	if err != nil {
+		return nil, err
+	}
+	if len(pkglist) > 1 {
+		fmt.Fprintf(os.Stderr, "warning: %q matched multiple packages\n", pattern)
+	}
+
+	return pkglist[0], nil
+}
+
+// load loads and return the packages named by the given pattern.
+func load(pattern string) ([]*Package, error) {
 	argv := []string{"-json"}
 	argv = append(argv, pattern)
 	stdout, err := invokeGo("list", argv, nil)
@@ -55,13 +69,7 @@ func Load(pattern string) (*Package, error) {
 		return nil, err
 	}
 
-	// Decode the first package, and ignore the rest.
-	pkg := new(Package)
-	if err := json.NewDecoder(stdout).Decode(pkg); err != nil {
-		return nil, fmt.Errorf("JSON decode: %v", err)
-	}
-
-	return normalize(pkg), nil
+	return decode(stdout)
 }
 
 func decode(r io.Reader) ([]*Package, error) {

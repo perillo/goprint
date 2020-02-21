@@ -7,6 +7,8 @@ package packages
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"time"
 )
 
@@ -52,13 +54,18 @@ func (m *Module) String() string {
 	return s
 }
 
-// LoadModule loads and return the module named by path and all its packages.
-func LoadModule(path string) (*Module, error) {
-	mod, err := loadModule(path)
+// LoadModule loads and return the module named by pattern and all its
+// packages.
+func LoadModule(pattern string) (*Module, error) {
+	modlist, err := loadm(pattern)
 	if err != nil {
 		return nil, err
 	}
+	if len(modlist) > 1 {
+		fmt.Fprintf(os.Stderr, "warning: %q matched multiple modules\n", pattern)
+	}
 
+	mod := modlist[0]
 	pkglist, err := loadPackages(mod)
 	if err != nil {
 		return nil, err
@@ -68,26 +75,34 @@ func LoadModule(path string) (*Module, error) {
 	return mod, nil
 }
 
-// loadModule loads and return the module named by the given path.
-func loadModule(path string) (*Module, error) {
+// loadm loads and return the modules named by the given pattern.
+func loadm(pattern string) ([]*Module, error) {
 	argv := []string{"-m", "-json"}
-	if path != "" {
-		// Don't pass an empty module path to go list -m.
+	if pattern != "" {
+		// Don't pass an empty argument to go list -m.
 		// See https://github.com/golang/go/issues/37300.
-		argv = append(argv, path)
+		argv = append(argv, pattern)
 	}
 	stdout, err := invokeGo("list", argv, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	// Decode the module; there is only one.
-	mod := new(Module)
-	if err := json.NewDecoder(stdout).Decode(mod); err != nil {
-		return nil, fmt.Errorf("JSON decode: %v", err)
+	return decodem(stdout)
+}
+
+func decodem(r io.Reader) ([]*Module, error) {
+	modlist := make([]*Module, 0, 10)
+	for dec := json.NewDecoder(r); dec.More(); {
+		mod := new(Module)
+		if err := dec.Decode(mod); err != nil {
+			return nil, fmt.Errorf("JSON decode: %w", err)
+		}
+
+		modlist = append(modlist, mod)
 	}
 
-	return mod, nil
+	return modlist, nil
 }
 
 // loadPackages loads and return all the package of the given module mod.
