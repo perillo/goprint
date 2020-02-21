@@ -14,6 +14,16 @@ var style = `
 	tab-size: 4;
 }
 
+html {
+	font-family: "{{ .Font.Family }}", Courier, monospace;
+	font-size: {{ .Font.Size }};
+	line-height: {{ .Font.LineHeight }};
+}
+
+code {
+	display: block;
+}
+
 .line {
 	color: #999;
 }
@@ -91,13 +101,6 @@ var style = `
 
 	.file > h1 {
 		display: none;
-	}
-
-	code {
-		display: block;
-		font-family: "{{ .Font.Family }}", Courier, monospace;
-		font-size: {{ .Font.Size }};
-		line-height: {{ .Font.LineHeight }};
 	}
 }
 
